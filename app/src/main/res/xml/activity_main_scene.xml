@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/bottom"
+        motion:constraintSetStart="@id/middle"
+        motion:motionInterpolator="bounce"
+        motion:duration="300">
+
+        <OnSwipe
+            motion:onTouchUp="autoComplete"
+            motion:dragDirection="dragDown"/>
+    </Transition>
+
+    <Transition
+        motion:constraintSetEnd="@+id/top"
+        motion:constraintSetStart="@id/middle"
+        motion:motionInterpolator="bounce"
+        motion:duration="300">
+
+        <OnSwipe
+            motion:onTouchUp="autoComplete"
+            motion:dragDirection="dragUp"/>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/middle">
+
+        <Constraint android:id="@+id/floatingImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Constraint android:id="@+id/shadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:alpha="1.0"/>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/top">
+
+        <Constraint android:id="@+id/floatingImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"/>
+
+        <Constraint android:id="@+id/shadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:alpha="0.0"/>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/bottom">
+
+        <Constraint android:id="@+id/floatingImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Constraint android:id="@+id/shadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            android:alpha="0.0"/>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+    </ConstraintSet>
+</MotionScene>
