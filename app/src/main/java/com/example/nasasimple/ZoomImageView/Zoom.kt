@@ -16,7 +16,6 @@ import java.lang.StringBuilder
 @SuppressLint("ClickableViewAccessibility")
 class Zoom(ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(ctx, attrs, defStyleAttr) {
 
-
     var rect = RectF (100f, 200f, 300f, 400f)
     var paint = Paint()
     val scene = Scene(context.resources.displayMetrics)
@@ -41,14 +40,13 @@ class Zoom(ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : V
         paint.strokeWidth = 10f
         scene.setBitmap(BitmapFactory.decodeResource(context.resources, R.drawable.test_image))
         setOnTouchListener { _, motionEvent ->
-
             val pointerCount = motionEvent.pointerCount
-            val actionMask = motionEvent.action and MotionEvent.ACTION_MASK
-            when (actionMask) {
+            var prevScale = 0f
+            when (motionEvent.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    touchPoints.add(Point(motionEvent.getX(0),
-                        motionEvent.getX(0),
-                        motionEvent.getPointerId(0)))
+                    touchPoints.add(Point(motionEvent.getX(motionEvent.actionIndex),
+                        motionEvent.getX(motionEvent.actionIndex),
+                        motionEvent.getPointerId(motionEvent.actionIndex)))
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     touchPoints.add(Point(motionEvent.getX(motionEvent.actionIndex),
@@ -58,14 +56,29 @@ class Zoom(ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : V
                 MotionEvent.ACTION_MOVE -> {
                     val movedPoint = mutableListOf<Point>()
                     for (i in 0 until pointerCount) {
-                       movedPoint.add(Point(motionEvent.getX(i),
-                           motionEvent.getY(i),
-                           motionEvent.getPointerId(i)))
-                   }
-                    touchPoints.movePoint(movedPoint)
-                    scene.y = motionEvent.getY(0)
-                    scene.x = motionEvent.getX(0)
+                        movedPoint.add(
+                            Point(
+                                motionEvent.getX(i),
+                                motionEvent.getY(i),
+                                motionEvent.getPointerId(i)
+                            )
+                        )
+                    }
+                    when (val motionPointEvent = touchPoints.movePoint(movedPoint)) {
+                        is MotionPoint.MoveOnePointEvent -> {
+                            scene.x = motionEvent.getX(motionEvent.actionIndex)
+                            scene.y = motionEvent.getY(motionEvent.actionIndex)
+                            //scene.motion(motionPointEvent.dx, motionPointEvent.dy)
+                        }
+                        is MotionPoint.MoveTwoPointEvent -> {
+                            scene.changeScale(motionPointEvent.distance)
+                        }
+                        is MotionPoint.MoveNotingEvent -> {
+
+                        }
+                    }
                     invalidate()
+
                 }
                 MotionEvent.ACTION_UP -> {
                     val arrayIds = mutableListOf<Int>()
@@ -84,7 +97,7 @@ class Zoom(ctx: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : V
                 }
             }
             val finalString = StringBuilder()
-            finalString.append(pointerCount)
+            finalString.append(pointerCount, " ", prevScale)
             finalString.appendLine()
             for (i in 0 until pointerCount) {
                 finalString.append(motionEvent.getPointerId(i), " -- ",  motionEvent.getX(i), "-", motionEvent.getX(i))
